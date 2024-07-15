@@ -1,0 +1,416 @@
+<html><head><base href="https://pedo-report.ai">
+    <title>PedoReport.ai - JSON-Based Global Child Protection Database</title>
+    <meta name="description" content="Contribute to and view our global JSON-based database of suspected online predator activities. Open-source platform for child protection.">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #1e1e1e;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        h1, h2, h3 {
+            color: #bb86fc;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        nav a {
+            color: #03dac6;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        nav a:hover {
+            color: #bb86fc;
+        }
+        .report-form, .reports-list, .database-info {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #bb86fc;
+        }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #333;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #bb86fc;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #03dac6;
+        }
+        .report-card {
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .report-card h4 {
+            color: #03dac6;
+            margin-top: 0;
+        }
+        .report-meta {
+            font-size: 0.9em;
+            color: #bb86fc;
+            margin-bottom: 10px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination button {
+            margin: 0 5px;
+        }
+        #filter-sort {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        #filter-sort select {
+            width: 48%;
+        }
+        #database-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background-color: #2c2c2c;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-box h3 {
+            margin: 0;
+            color: #03dac6;
+        }
+        #map-container {
+            height: 400px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>PedoReport.ai</h1>
+            <nav>
+                <a href="#report">Report</a>
+                <a href="#database">JSON Database</a>
+                <a href="#about">About</a>
+                <a href="#resources">Resources</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="report" class="report-form">
+            <h2>Contribute to the JSON Database</h2>
+            <form id="report-form">
+                <div class="form-group">
+                    <label for="reporter-name">Your Name (optional):</label>
+                    <input type="text" id="reporter-name">
+                </div>
+                <div class="form-group">
+                    <label for="suspect-username">Suspect's Username:</label>
+                    <input type="text" id="suspect-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="platform">Platform:</label>
+                    <input type="text" id="platform" required>
+                </div>
+                <div class="form-group">
+                    <label for="evidence">Evidence (include links or screenshots if possible):</label>
+                    <textarea id="evidence" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="severity">Perceived Severity:</label>
+                    <select id="severity" required>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="location">Location (Country):</label>
+                    <input type="text" id="location" required>
+                </div>
+                <button type="submit">Submit Report</button>
+            </form>
+        </section>
+
+        <section id="database" class="reports-list">
+            <h2>JSON Database of Reports</h2>
+            <div id="filter-sort">
+                <select id="filter-platform">
+                    <option value="all">All Platforms</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="discord">Discord</option>
+                    <option value="other">Other</option>
+                </select>
+                <select id="sort-by">
+                    <option value="date-desc">Newest First</option>
+                    <option value="date-asc">Oldest First</option>
+                    <option value="severity-desc">Highest Severity First</option>
+                    <option value="severity-asc">Lowest Severity First</option>
+                </select>
+            </div>
+            <div id="reports-container"></div>
+            <div class="pagination">
+                <button id="prev-page">Previous</button>
+                <span id="page-info"></span>
+                <button id="next-page">Next</button>
+            </div>
+        </section>
+
+        <section class="database-info">
+            <h2>Database Statistics</h2>
+            <div id="database-stats">
+                <div class="stat-box">
+                    <h3>Total Reports</h3>
+                    <p id="total-reports">0</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Countries Involved</h3>
+                    <p id="total-countries">0</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Critical Cases</h3>
+                    <p id="critical-cases">0</p>
+                </div>
+            </div>
+            <h3>Global Distribution of Reports</h3>
+            <div id="map-container"></div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css">
+
+    <script>
+        let reports = [];
+        let currentPage = 1;
+        const reportsPerPage = 10;
+
+        // Load reports from JSON file
+        fetch('reports.json')
+            .then(response => response.json())
+            .then(data => {
+                reports = data;
+                renderReports();
+                updateStats();
+            })
+            .catch(error => {
+                console.error('Error loading reports:', error);
+                // If the file doesn't exist or is empty, initialize with an empty array
+                reports = [];
+            });
+
+        document.getElementById('report-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newReport = {
+                id: Date.now(),
+                reporterName: document.getElementById('reporter-name').value || 'Anonymous',
+                suspectUsername: document.getElementById('suspect-username').value,
+                platform: document.getElementById('platform').value,
+                evidence: document.getElementById('evidence').value,
+                severity: document.getElementById('severity').value,
+                location: document.getElementById('location').value,
+                date: new Date().toISOString()
+            };
+
+            reports.push(newReport);
+            saveReports();
+            renderReports();
+            updateStats();
+            this.reset();
+        });
+
+        function saveReports() {
+            // In a real-world scenario, this would be a server-side operation
+            // For this example, we'll simulate saving to a file using the Fetch API
+            fetch('/save-reports', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reports)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Reports saved successfully:', data);
+                // Write the reports to the reports.json file
+                const blob = new Blob([JSON.stringify(reports, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'reports.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            })
+            .catch((error) => console.error('Error saving reports:', error));
+        }
+
+        function renderReports() {
+            const container = document.getElementById('reports-container');
+            container.innerHTML = '';
+
+            const filteredReports = filterReports();
+            const sortedReports = sortReports(filteredReports);
+            const paginatedReports = paginateReports(sortedReports);
+
+            paginatedReports.forEach(report => {
+                const reportCard = document.createElement('div');
+                reportCard.className = 'report-card';
+                reportCard.innerHTML = `
+                    <h4>${report.suspectUsername} on ${report.platform}</h4>
+                    <div class="report-meta">
+                        Reported by: ${report.reporterName} | Date: ${new Date(report.date).toLocaleString()} | Severity: ${report.severity} | Location: ${report.location}
+                    </div>
+                    <p>${report.evidence}</p>
+                `;
+                container.appendChild(reportCard);
+            });
+
+            updatePagination();
+        }
+
+        function filterReports() {
+            const platform = document.getElementById('filter-platform').value;
+            return platform === 'all' ? reports : reports.filter(report => report.platform.toLowerCase() === platform.toLowerCase());
+        }
+
+        function sortReports(reportsToSort) {
+            const sortBy = document.getElementById('sort-by').value;
+            return reportsToSort.sort((a, b) => {
+                switch(sortBy) {
+                    case 'date-desc':
+                        return new Date(b.date) - new Date(a.date);
+                    case 'date-asc':
+                        return new Date(a.date) - new Date(b.date);
+                    case 'severity-desc':
+                        return b.severity.localeCompare(a.severity);
+                    case 'severity-asc':
+                        return a.severity.localeCompare(b.severity);
+                }
+            });
+        }
+
+        function paginateReports(reportsToPage) {
+            const startIndex = (currentPage - 1) * reportsPerPage;
+            return reportsToPage.slice(startIndex, startIndex + reportsPerPage);
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filterReports().length / reportsPerPage);
+            document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prev-page').disabled = currentPage === 1;
+            document.getElementById('next-page').disabled = currentPage === totalPages;
+        }
+
+        function updateStats() {
+            const totalReports = reports.length;
+            const countries = new Set(reports.map(report => report.location));
+            const criticalCases = reports.filter(report => report.severity === 'critical').length;
+
+            document.getElementById('total-reports').textContent = totalReports;
+            document.getElementById('total-countries').textContent = countries.size;
+            document.getElementById('critical-cases').textContent = criticalCases;
+
+            updateMap(Array.from(countries));
+        }
+
+        function updateMap(countries) {
+            const map = L.map('map-container').setView([0, 0], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            countries.forEach(country => {
+                fetch(`https://nominatim.openstreetmap.org/search?country=${country}&format=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            L.marker([data[0].lat, data[0].lon]).addTo(map)
+                                .bindPopup(country);
+                        }
+                    });
+            });
+        }
+
+        document.getElementById('prev-page').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderReports();
+            }
+        });
+
+        document.getElementById('next-page').addEventListener('click', () => {
+            const totalPages = Math.ceil(filterReports().length / reportsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderReports();
+            }
+        });
+
+        document.getElementById('filter-platform').addEventListener('change', () => {
+            currentPage = 1;
+            renderReports();
+        });
+
+        document.getElementById('sort-by').addEventListener('change', () => {
+            currentPage = 1;
+            renderReports();
+        });
+    </script>
+</body></html>
